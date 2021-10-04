@@ -1,0 +1,40 @@
+version: '3.2'
+
+services:
+   db:
+    image: mariadb
+    volumes:
+      - ./db_data:/var/lib/mysql
+    environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress:
+    image: wordpress
+    depends_on:
+       - db
+    volumes:
+      - ./wp_content:/var/www/html
+    ports:
+       - "80:80"
+    environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+       WORDPRESS_DB_NAME: wordpress
+
+volumes:
+  db_data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.2.3.123,nolock,soft,rw"
+#      device: ":/vol/mysql"
+      device: ":/stgwp/myql"
+  wp_content:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.2.3.123,nolock,soft,rw"
+#      device: ":/vol/wordpress"
+      device: ":/stgwp/wordpress"
